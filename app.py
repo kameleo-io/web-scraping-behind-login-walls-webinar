@@ -1,10 +1,12 @@
 from kameleo.local_api_client import KameleoLocalApiClient
 from kameleo.local_api_client.builder_for_create_profile import BuilderForCreateProfile
 from kameleo.local_api_client.models import Server
+from kameleo.local_api_client.models import ExportProfileRequest
 from playwright.sync_api import sync_playwright
 from proxy_management import *
 from profile_store import *
 import time
+import os
 
 # Proxy details
 proxy_host = 'x240.fxdx.in'
@@ -76,9 +78,14 @@ with sync_playwright() as playwright:
     # Use any Playwright command to drive the browser
     # and enjoy full protection from bot detection products
     page.goto('https://www.facebook.com/marketplace/100232032143091/propertyrentals/?exact=false')
-    for i in range(5):
-        page.mouse.wheel(0, 15000)
-        time.sleep(2)
+    for i in range(50):
+        page.mouse.wheel(0, 150)
+        time.sleep(0.2)
 
 # Stop the browser by stopping the Kameleo profile
 client.stop_profile(profile.id)
+
+# Export the profile to a file to store it for longer time
+folder = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(folder, 'profiles', f'{profile.name}.kameleo')
+client.export_profile(profile.id, body=ExportProfileRequest(path=path))
