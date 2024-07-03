@@ -21,10 +21,19 @@ client = KameleoLocalApiClient(
     retry_total=0
 )
 
+
+def get_profile_by_name(name):
+    profiles = client.list_profiles()
+    for p in profiles:
+        if p.name == name:
+            return p
+    return None
+
+
 # Init profile store (an sqlite db)
 init_profile_store()
 
-# Renew IP through proxy management url
+# Get new IP from the pool
 renew_ip()
 
 # Check what ip we have right now
@@ -35,11 +44,7 @@ profile_name = lookup_profile_by_ip(ip)
 
 profile = None
 if profile_name is not None:
-    profiles = client.list_profiles()
-    for p in profiles:
-        if p.name == profile_name:
-            profile = p
-            break
+    profile = get_profile_by_name(profile_name)
 else:
     base_profiles = client.search_base_profiles(
         device_type='desktop',
